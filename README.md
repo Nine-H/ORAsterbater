@@ -33,6 +33,6 @@ Move `orasterizer.py` to the root directory of your assets and call it with `./o
 
 test_data | export (GIMP) | ORAsterized
 --|--|--
-basic.ora | ![](test_exported/basic.png) | ![](test_data/basic.png)
+basic.ora | ![](test_exported/basic.png) | ![](build/test_data/basic.png)
 separate_layers.ora | ![](test_exported/separate_layers.png) | ![](build/test_data/separate_layers_right.png) ![](build/test_data/separate_layers_left.png)
 skip_layer.ora | ![](test_exported/skip_layer.png) | ![](build/test_data/skip_layer.png)
