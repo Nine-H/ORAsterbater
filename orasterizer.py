@@ -38,6 +38,9 @@ def for_image(ora):
         ora_tree(elem)
     print ('woot woot get the loot')
     dump (data[1], data[0])
+    
+def clean_up():
+    os.system ('rm -rf '+TMP_DIR)
 
 def ora_tree(elem):
     if elem.tag == 'layer':
@@ -51,13 +54,6 @@ def ora_tree(elem):
         for child in elem:
             ora_tree(child)
 
-def clean_up():
-    os.system ('rm -rf '+TMP_DIR)
-
-def read_xml():
-    f = open (TMP_DIR+'stack.xml')
-    return xmltodict.parse(f.read())
-
 #FIXME: I probably shouldn't be abusing globals like this
 def create_new_buffer(height, width):
     global image_buffer
@@ -70,6 +66,7 @@ def add_to_buffer(filename):
     image_buffer = Image.alpha_composite(file, image_buffer)
 
 def dump(name,directory):
+    global layer_group
     global image_buffer
     image_buffer.save('./'+OUTPUT_DIR+directory+"/"+name+'_'+'layer_group'+'.png')
 
