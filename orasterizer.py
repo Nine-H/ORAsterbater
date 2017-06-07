@@ -35,13 +35,13 @@ def for_image(ora):
     print (root.tag, root.attrib['h'], root.attrib['w'])
     create_new_buffer(int(root.attrib['h']),int(root.attrib['w']))
     for elem in root:
-        ora_tree(elem, data[0], data[1])
+        ora_tree(elem, data[0], data[1], int(root.attrib['h']), int(root.attrib['w']))
     dump (data[1], data[0])
     
 def clean_up():
     os.system ('rm -rf '+TMP_DIR)
 
-def ora_tree(elem, directory, name):
+def ora_tree(elem, directory, name, h, w):
     if elem.tag == 'layer':
         print ('layer operations')
         print (elem.tag, elem.attrib['composite-op'], elem.attrib['name'], elem.attrib['opacity'], elem.attrib['src'], elem.attrib['visibility'], elem.attrib['x'], elem.attrib['y'])
@@ -54,9 +54,10 @@ def ora_tree(elem, directory, name):
                 return
             global layer_group
             dump(name, directory)
+            create_new_buffer(h,w)
             layer_group = elem.attrib['name']
         for child in elem:
-            ora_tree(child, directory, name)
+            ora_tree(child, directory, name, h, w)
 
 #FIXME: I probably shouldn't be abusing globals like this
 def create_new_buffer(height, width):
