@@ -57,7 +57,8 @@ def clean_up():
 def read_xml():
     f = open (TMP_DIR+'stack.xml')
     return xmltodict.parse(f.read())
-    
+
+#FIXME: I probably shouldn't be abusing globals like this
 def create_new_buffer(height, width):
     global image_buffer
     image_buffer = Image.new('RGBA', (height, width), (255, 0, 0, 0))
@@ -70,7 +71,7 @@ def add_to_buffer(filename):
 
 def dump(name,directory):
     global image_buffer
-    image_buffer.save('./'+OUTPUT_DIR+directory+name+'_'+'layer_group'+'.png')
+    image_buffer.save('./'+OUTPUT_DIR+directory+"/"+name+'_'+'layer_group'+'.png')
 
 #FIXME: I probably shouldn't be abusing the unix shell like this
 find = subprocess.run(['find', '-depth', '-name', '*.ora'], stdout=subprocess.PIPE)
