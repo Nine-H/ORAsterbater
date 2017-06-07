@@ -31,6 +31,6 @@ Move `orasterizer.py` to the root directory of your assets and call it with `./o
 
 filename | export (gimp) | orasterized
 --|--|--
-basic.ora | ![](ORAsterizer/test_exported/basic.png) | ![]()
+basic.ora | ![](https://github.com/Nine-H/ORAsterizer/raw/master/test_exported/basic.png) | ![]()
 separate_layers.ora | ![]() | ![]() ![]()
 skip.ora | ![]() | ![]()
