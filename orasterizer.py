@@ -51,6 +51,8 @@ def ora_tree(elem):
             print (elem.attrib['composite-op'], elem.attrib['name'], elem.attrib['opacity'], elem.attrib['visibility'])
             if elem.attrib['name'] == 'skip':
                 return
+            global layer_group
+            layer_group = elem.attrib['name']
         for child in elem:
             ora_tree(child)
 
@@ -68,7 +70,7 @@ def add_to_buffer(filename):
 def dump(name,directory):
     global layer_group
     global image_buffer
-    image_buffer.save('./'+OUTPUT_DIR+directory+"/"+name+'_'+'layer_group'+'.png')
+    image_buffer.save('./'+OUTPUT_DIR+directory+"/"+name+'_'+layer_group+'.png')
 
 #FIXME: I probably shouldn't be abusing the unix shell like this
 find = subprocess.run(['find', '-depth', '-name', '*.ora'], stdout=subprocess.PIPE)
