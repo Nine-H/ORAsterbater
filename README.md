@@ -12,7 +12,7 @@ That's 116 separate exports, with god knows how many file-ops. As the asset tree
 ### features
 
 - [x] full flattened image with transparency
-- [ ] export layer groups to separate files
+- [x] export layer groups to separate files
 - [x] automatic flattening of layer groups
 - [x] skip layers
 - [ ] blend modes
@@ -33,6 +33,6 @@ Move `orasterizer.py` to the root directory of your assets and call it with `./o
 
 test_data | export (GIMP) | ORAsterized
 --|--|--
-basic.ora | ![](https://github.com/Nine-H/ORAsterizer/raw/master/test_exported/basic.png) | ![](https://github.com/Nine-H/ORAsterizer/raw/master/test_exported/build/test_data/basic.png)
-separate_layers.ora | ![](https://github.com/Nine-H/ORAsterizer/raw/master/test_exported/separate_layers.png) | ![](https://github.com/Nine-H/ORAsterizer/raw/master/test_exported/build/test_data/separate_layers_right.png) ![](https://github.com/Nine-H/ORAsterizer/raw/master/test_exported/build/test_data/separate_layers_left.png)
-skip_layer.ora | ![](https://github.com/Nine-H/ORAsterizer/raw/master/test_exported/skip_layer.png) | ![](https://github.com/Nine-H/ORAsterizer/raw/master/test_exported/build/test_data/skip_layer.png)
+basic.ora | ![](test_exported/basic.png) | ![](build/test_data/basic.png)
+separate_layers.ora | ![](test_exported/separate_layers.png) | ![](build/test_data/separate_layers_right.png) ![](build/test_data/separate_layers_left.png)
+skip_layer.ora | ![](test_exported/skip_layer.png) | ![](build/test_data/skip_layer.png)
