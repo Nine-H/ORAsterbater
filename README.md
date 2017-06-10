@@ -12,7 +12,7 @@ That's 116 separate exports, with god knows how many file-ops. As the asset tree
 ### features
 
 - [x] full flattened image with transparency
-- [ ] export layer groups to separate files
+- [x] export layer groups to separate files
 - [x] automatic flattening of layer groups
 - [x] skip layers
 - [ ] blend modes
