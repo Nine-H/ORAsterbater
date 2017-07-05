@@ -15,6 +15,7 @@ import zipfile
 from PIL import Image
 import xml.etree.ElementTree as ET
 
+DEBUG = False
 BASE_PATH = ""
 RELATIVE_PATH = '../test/'
 THUMBNAIL_FILE = 'Thumbnails/thumbnail.png'
@@ -30,7 +31,7 @@ def for_image(ora):
     ora_ref = zipfile.ZipFile(ora, 'r')
     ora_ref.extractall(TMP_DIR)  # don't pass this reference, just use the file tree.
     os.system('mkdir -p '+OUTPUT_DIR+'/'+data[0]+'/')
-    xml = ET.parse(TMP_DIR+META_DATA)
+    xml = ET.parse(os.path.join(TMP_DIR, META_DATA))
     print(xml)
     root = xml.getroot()
     print(root.tag, root.attrib['h'], root.attrib['w'])
@@ -84,8 +85,9 @@ def dump(name, directory):
         layer_group = "_"+layer_group
     except:
         layer_group = ""
-    print(OUTPUT_DIR+directory+"/"+name+'_'+layer_group+'.png')
-    image_buffer.save('./'+OUTPUT_DIR+directory+"/"+name+layer_group+'.png')
+    path = os.path.join(OUTPUT_DIR, directory, name+layer_group+'.png')
+    print(path)
+    image_buffer.save(path)
     del layer_group
 
 # FIXME: I probably shouldn't be abusing the unix shell like this
@@ -93,4 +95,4 @@ find = subprocess.run(['find', '-depth', '-name', '*.ora'], stdout=subprocess.PI
 image_list = find.stdout.decode('utf-8')
 for image in image_list.splitlines():
     for_image(image)
-clean_up()  # Commenting this line leaves last TMP_DIR state on disk for debug purposes
+if not DEBUG: clean_up()
