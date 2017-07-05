@@ -78,7 +78,6 @@ def add_to_buffer(filename):
 
 
 def dump(name, directory):
-    print('woot woot get the loot')
     global layer_group
     global image_buffer
     try:
@@ -86,7 +85,7 @@ def dump(name, directory):
     except:
         layer_group = ""
     path = os.path.join(OUTPUT_DIR, directory, name+layer_group+'.png')
-    print(path)
+    print("saving to: " + path)
     image_buffer.save(path)
     del layer_group
 
@@ -94,5 +93,8 @@ def dump(name, directory):
 find = subprocess.run(['find', '-depth', '-name', '*.ora'], stdout=subprocess.PIPE)
 image_list = find.stdout.decode('utf-8')
 for image in image_list.splitlines():
-    for_image(image)
+    try:
+        for_image(image)
+    except:
+        print ("ERROR: " + image)
 if not DEBUG: clean_up()
