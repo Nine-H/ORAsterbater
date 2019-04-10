@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-# ORAsterizer.py
+# ORAsterizer
 # Nine-H_2017.05.31
 # Content pipeline for openraster graphics.
 
@@ -12,13 +12,14 @@ import zipfile
 from PIL import Image
 import xml.etree.ElementTree as ET
 
+import click
+
 BASE_PATH = ""
 RELATIVE_PATH = '../test/'
 THUMBNAIL_FILE = 'Thumbnails/thumbnail.png'
 META_DATA = 'stack.xml'
 TMP_DIR = './tmp/'
 OUTPUT_DIR = './build/'
-
 
 def for_image(ora):
     clean_up()
@@ -85,9 +86,20 @@ def dump(name, directory):
     image_buffer.save('./'+OUTPUT_DIR+directory+"/"+name+layer_group+'.png')
     del layer_group
 
-# FIXME: I probably shouldn't be abusing the unix shell like this
-find = subprocess.run(['find', '-depth', '-name', '*.ora'], stdout=subprocess.PIPE)
-image_list = find.stdout.decode('utf-8')
-for image in image_list.splitlines():
-    for_image(image)
-clean_up()  # Commenting this line leaves last TMP_DIR state on disk for debug purposes
+@click.command()
+@click.option('--input', default='./', help='Path to root of content tree')
+@click.option('--temp', default='/tmp/', help='Path to temp directory')
+@click.option('--output', default='./build/', help='Path to output directory')
+def main ():
+    '''
+    Content management pipeline for openraster graphics.
+    '''
+    # FIXME: I probably shouldn't be abusing the unix shell like this
+    find = subprocess.run(['find', '-depth', '-name', '*.ora'], stdout=subprocess.PIPE)
+    image_list = find.stdout.decode('utf-8')
+    for image in image_list.splitlines():
+        for_image(image)
+    clean_up()  # Commenting this line leaves last TMP_DIR state on disk for debug purposes
+
+if __name__ == '__main__':
+    main()

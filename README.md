@@ -1,5 +1,10 @@
 # ORAsterizer.py
 
+```
+edit: it's 2019, two years later, and I'm dusting off orasterizer, it's going to be a pip3 package runnable from the commandline, get psyched!
+
+```
+
 ORAsterizer is a content pipeline for openraster graphics. While building game graphics every additional asset adds multiple operations to your pipeline. For example a game with 30 monsters, with 3 frames each, 8 status icons, and six backgrounds with 3 parallax layers:
 
 ``
