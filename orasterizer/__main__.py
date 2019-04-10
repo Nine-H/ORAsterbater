@@ -4,15 +4,11 @@
 # Nine-H_2017.05.31
 # Content pipeline for openraster graphics.
 
-import subprocess  # FIXME: remove
-import re  # FIXME: remove
-
+import click
 import os
 import zipfile
 from PIL import Image
 import xml.etree.ElementTree as ET
-
-import click
 
 BASE_PATH = ""
 RELATIVE_PATH = '../test/'
@@ -21,8 +17,7 @@ META_DATA = 'stack.xml'
 TMP_DIR = './tmp/'
 OUTPUT_DIR = './build/'
 
-def for_image(ora):
-    clean_up()
+def process(ora):
     data = re.findall('\w+', ora)  # data[0] = directory #data[1] = filename
     print('opened: '+data[1])
     ora_ref = zipfile.ZipFile(ora, 'r')
@@ -36,11 +31,6 @@ def for_image(ora):
     for elem in root:
         ora_tree(elem, data[0], data[1], int(root.attrib['h']), int(root.attrib['w']))
     dump(data[1], data[0])
-
-
-def clean_up():
-    os.system('rm -rf '+TMP_DIR)
-
 
 def ora_tree(elem, directory, name, h, w):
     if elem.tag == 'layer':
@@ -87,29 +77,32 @@ def dump(name, directory):
     del layer_group
 
 @click.command()
-@click.option('--input', default='./', help='Path to root of content tree')
-@click.option('--temp', default='/tmp/', help='Path to temp directory')
-@click.option('--output', default='../build/', help='Path to output directory')
-def main ():
+@click.option('--src_dir', default='./', help='Path to source directory')
+@click.option('--tmp', default='./.tmp/', help='Path to temp directory')
+@click.option('--out_dir', default='./build/', help='Path to output directory')
+@click.option('--keep', default=False, help='Save temp directory for debug')
+def main (src_dir, tmp, out_dir):
     '''
     Content management pipeline for openraster graphics.
     
-    Splitting images:
-    
-    Layer groups get rendered to their own image in the build directory.
-    
-    Skip layers:
-    
-    All layers in a layer group named "skip" will not be rendered into the exported image.
-    
-    contribute: https://github.com/nine-h/orasterizer
+    docs/examples/contribute @ https://github.com/nine-h/orasterizer
     '''
-    # FIXME: I probably shouldn't be abusing the unix shell like this
-    find = subprocess.run(['find', '-depth', '-name', '*.ora'], stdout=subprocess.PIPE)
-    image_list = find.stdout.decode('utf-8')
-    for image in image_list.splitlines():
-        for_image(image)
-    clean_up()  # Commenting this line leaves last TMP_DIR state on disk for debug purposes
+    if not os.path.exists(src_dir):
+        click.echo("error: source folder "+src_dir+" not found!")
+        quit()
+    if not os.path.exists(tmp):
+        os.makedirs(tmp)
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+    content_files = []
+    for dirpath, dirnames, filenames in os.walk(src_dir):
+        for filename in filenames:
+            if ".ora" in filename:
+                click.echo("found content: "+os.path.join(dirpath,filename))
+                content_files.append(os.path.join(dirpath,filename))
+    [process(i) for i in content_files]
+    if not keep:
+        os.rmdir(tmp)
 
 if __name__ == '__main__':
     main()
