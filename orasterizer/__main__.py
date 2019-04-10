@@ -89,10 +89,20 @@ def dump(name, directory):
 @click.command()
 @click.option('--input', default='./', help='Path to root of content tree')
 @click.option('--temp', default='/tmp/', help='Path to temp directory')
-@click.option('--output', default='./build/', help='Path to output directory')
+@click.option('--output', default='../build/', help='Path to output directory')
 def main ():
     '''
     Content management pipeline for openraster graphics.
+    
+    Splitting images:
+    
+    Layer groups get rendered to their own image in the build directory.
+    
+    Skip layers:
+    
+    All layers in a layer group named "skip" will not be rendered into the exported image.
+    
+    contribute: https://github.com/nine-h/orasterizer
     '''
     # FIXME: I probably shouldn't be abusing the unix shell like this
     find = subprocess.run(['find', '-depth', '-name', '*.ora'], stdout=subprocess.PIPE)
