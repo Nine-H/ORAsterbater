@@ -13,38 +13,42 @@ import xml.etree.ElementTree as ET
 THUMBNAIL_FILE = os.path.join('Thumbnails','thumbnail.png')
 META_DATA = 'stack.xml'
 
+class Ora:
+    def __init__(self, path):
+        self.fullpath = path
+        self.filename, self.file_extension = os.path.splitext(self.fullpath)
+        self.filename = self.filename.split("/")[-1]
+
 def process(ora, tmp, out_dir):
-    data = re.findall('\w+', ora)  # data[0] = directory #data[1] = filename
-    click.echo('opened: '+data[1])
+    current_file = Ora(ora)
     ora_ref = zipfile.ZipFile(ora, 'r')
-    ora_ref.extractall(tmp)  # don't pass this reference, just use the file tree.
-    os.mkdirs(os.path.join(out_dir, data[0]))
+    ora_ref.extractall(tmp)
     xml = ET.parse(os.path.join(tmp, META_DATA))
     click.echo(xml)
     root = xml.getroot()
-    click.echo(root.tag, root.attrib['h'], root.attrib['w'])
+    click.echo(root.tag + root.attrib['h'] + root.attrib['w'])
     create_new_buffer(int(root.attrib['h']), int(root.attrib['w']))
     for elem in root:
-        ora_tree(tmp, elem, data[0], data[1], int(root.attrib['h']), int(root.attrib['w']))
-    dump(out_dir, data[1], data[0])
+        ora_tree(out_dir, tmp, elem, current_file.fullpath, current_file.filename, int(root.attrib['h']), int(root.attrib['w']))
+    dump(out_dir, current_file.filename, current_file.fullpath)
 
-def ora_tree(tmp, elem, directory, name, h, w):
+def ora_tree(out_dir, tmp, elem, directory, name, h, w):
     if elem.tag == 'layer':
         click.echo('layer operations')
-        click.echo(elem.tag, elem.attrib['composite-op'], elem.attrib['name'], elem.attrib['opacity'], elem.attrib['src'], elem.attrib['visibility'], elem.attrib['x'], elem.attrib['y'])
+        #click.echo(elem.tag, elem.attrib['composite-op'], elem.attrib['name'], elem.attrib['opacity'], elem.attrib['src'], elem.attrib['visibility'], elem.attrib['x'], elem.attrib['y'])
         add_to_buffer(tmp, elem.attrib['src'])
     if elem.tag == 'stack':
         click.echo('stack operations')
         if 'name' in elem.attrib:
-            click.echo(elem.tag, elem.attrib['composite-op'], elem.attrib['name'], elem.attrib['opacity'], elem.attrib['visibility'])
+            #click.echo(elem.tag, elem.attrib['composite-op'], elem.attrib['name'], elem.attrib['opacity'], elem.attrib['visibility'])
             if elem.attrib['name'] == 'skip':
                 return
             global layer_group
-            dump(name, directory)
+            dump(out_dir, name, directory)
             create_new_buffer(h, w)
             layer_group = elem.attrib['name']
         for child in elem:
-            ora_tree(child, directory, name, h, w)
+            ora_tree(out_dir, tmp, child, directory, name, h, w)
 
 
 # FIXME: I probably shouldn't be abusing globals like this
@@ -68,8 +72,8 @@ def dump(out_dir, name, directory):
         layer_group = "_"+layer_group
     except:
         layer_group = ""
-    click.echo(os.path.join(".", out_dir, directory, name+"_"+layer_group+".png"))
-    image_buffer.save(os.path.join(".", out_dir, directory, name+"_"+layer_group+".png"))
+    click.echo(os.path.join(out_dir, directory, name+layer_group+".png"))
+    image_buffer.save(os.path.join(out_dir, name+layer_group+".png"))
     del layer_group
 
 @click.command()
@@ -77,7 +81,7 @@ def dump(out_dir, name, directory):
 @click.option('--tmp', default='./.tmp/', help='Path to temp directory')
 @click.option('--out_dir', default='./build/', help='Path to output directory')
 @click.option('--keep', default=False, help='Save temp directory for debug')
-def main (src_dir, tmp, out_dir):
+def main (src_dir, tmp, out_dir, keep):
     '''
     Content management pipeline for openraster graphics.
     
